@@ -10,13 +10,18 @@ import {
 
 import Note from './Note';
 
+
+
 export default class Main extends Component<Props> {
     constructor(props) {
         super(props);
         this.state = {
             noteArray: [],
             noteText: '',
-        }
+        };
+        let todoList = this.testGet();
+        console.log(todoList);
+        console.log('++++++++++');
     }
 
     render() {
@@ -31,7 +36,7 @@ export default class Main extends Component<Props> {
 
                 <View style={styles.header}>
                     <Text style={styles.headerText}>
-                        - Noter -
+                        - Just TODO -
                     </Text>
                 </View>
 
@@ -43,7 +48,7 @@ export default class Main extends Component<Props> {
                     <TextInput style={styles.textInput}
                                onChangeText={(noteText) => this.setState({noteText})}
                                value={this.state.noteText}
-                               placeholder='>note'
+                               placeholder='>添加TODO事项'
                                placeholderTextColor='while'
                                underlineColorAndroid='transparent'>
 
@@ -59,22 +64,60 @@ export default class Main extends Component<Props> {
     }
 
     addNote() {
+        this.testGet();
+
         if (this.state.noteText) {
             let d = new Date();
             this.state.noteArray.push({
-               'date': d.getFullYear() +
-               "/" + (d.getMonth() + 1) +
-               "/" + d.getDate(),
+                'date': d.getFullYear() +
+                "/" + (d.getMonth() + 1) +
+                "/" + d.getDate(),
                 'note': this.state.noteText
             });
-            this.setState({ noteArray: this.state.noteArray });
-            this.setState({ noteText: '' });
+            this.setState({noteArray: this.state.noteArray});
+            this.setState({noteText: ''});
         }
     }
 
     deleteNote(key) {
-        this.state.noteArray.splice(key,1);
-        this.setState({ noteArray: this.state.noteArray })
+        this.state.noteArray.splice(key, 1);
+        this.setState({noteArray: this.state.noteArray})
+    }
+
+    testPost() {
+        console.log("this-is-addNote-function");
+
+        fetch('http://192.168.15.16:8808/post', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: 'xiaoming',
+                firstname: 'xiao',
+                lastname: 'mingming',
+                city: 'vencouver',
+                age: 22,
+            })
+        }).then((response) => console.log(response.toString())).catch((error) => {
+            console.error(error);
+        });
+    }
+
+    testGet() {
+        console.log("this-is-get-function");
+
+        fetch('http://192.168.15.16:8808/get')
+            .then((response) => {
+                return response.json();
+            })
+            .then((res) => {
+                for (let i=0; i<res.length; i++){
+                    console.log('-//////////-');
+                    console.log(res[i].time, res[i].info);
+                }
+            });
     }
 }
 
@@ -109,7 +152,7 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch',
         color: '#fff',
         padding: 20,
-        backgroundColor: '#252525',
+        backgroundColor: '#915c8b',
         borderTopWidth: 2,
         borderTopColor: '#ededed',
     },
@@ -120,8 +163,8 @@ const styles = StyleSheet.create({
         right: 20,
         bottom: 90,
         backgroundColor: '#E91E63',
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         borderRadius: 50,
         alignItems: 'center',
         justifyContent: 'center',
